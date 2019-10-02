@@ -21,15 +21,15 @@ namespace DLearnServices.Services
             {
                 UserEntity userEntity = new UserEntity
                 {
-                    DOB = item.DATE_OF_BIRTH,
+                    DOB = item.DATEOFBIRTH,
                     Email = item.EMAIL,
-                    FirstName = item.FIRST_NAME,
-                    FullName = item.FULL_NAME,
+                    FirstName = item.FIRSTNAME,
+                    FullName = item.FULLNAME,
                     Gender = item.GENDER,
-                    LastName = item.LAST_NAME,
-                    Phone = item.PHONE_NUMBER,
-                    SubscriptionType = item.SUBSCRIPTION_TYPE,
-                    UserId = item.USER_ID
+                    LastName = item.LASTNAME,
+                    Phone = item.PHONENUMBER,
+                    SubscriptionType = item.SUBSCRIPTIONTYPE,
+                    UserId = item.USERID
                 };
                 userEntities.Add(userEntity);
             }
