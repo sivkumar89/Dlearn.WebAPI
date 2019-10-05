@@ -13,6 +13,7 @@ namespace DLearnRepositories.DapperEntities
         public string GENDER { get; set; }
         public DateTime DATEOFBIRTH { get; set; }
         public string PASSWORDHASH { get; set; }
+        public string SALT { get; set; }
         public string EMAIL { get; set; }
         public string PHONENUMBER { get; set; }
         public long? ADDRESSID { get; set; }
