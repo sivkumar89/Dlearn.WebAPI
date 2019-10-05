@@ -9,20 +9,33 @@ using System.Data.SqlClient;
 
 namespace DLearnRepositories.UnitOfWork
 {
+    #region Unit of Work
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
+        #region Private Declarations
         private IDbConnection _connection;
         private IDbTransaction _transaction;
         private readonly string _connectionString;
 
         private IDapperRepository<USERS> _userRepository;
+        private IDapperRepository<COURSECATEGORY> _courseCategoryRepository;
+        private IDapperRepository<COURSEOBJECTIVES> _courseObjectiveRepository;
+        private IDapperRepository<COURSES> _courseRepository;
+        private IDapperRepository<QUESTIONLIBRARY> _questionLibraryRepository;
+        private IDapperRepository<QUESTIONTYPES> _questionTypeRepository;
+        #endregion
 
+        #region Constructor
         public UnitOfWork()
         {
             _connectionString = Utility.GetConnectionString(RepositoryConstants.DLearnConnectionString);
             _connection = new SqlConnection(_connectionString);
         }
+        #endregion
 
+        #region Properties
+
+        #region User Repository
         public IDapperRepository<USERS> UserRepository
         {
             get
@@ -34,7 +47,83 @@ namespace DLearnRepositories.UnitOfWork
                 return _userRepository;
             }
         }
+        #endregion
 
+        #region Course Category Repository
+        public IDapperRepository<COURSECATEGORY> CourseCategoryRepository
+        {
+            get
+            {
+                if (_courseCategoryRepository == null)
+                {
+                    _courseCategoryRepository = new DapperRepository<COURSECATEGORY>(_connection);
+                }
+                return _courseCategoryRepository;
+            }
+        }
+        #endregion
+
+        #region Course Objective Repository
+        public IDapperRepository<COURSEOBJECTIVES> CourseObjectiveRepository
+        {
+            get
+            {
+                if (_courseObjectiveRepository == null)
+                {
+                    _courseObjectiveRepository = new DapperRepository<COURSEOBJECTIVES>(_connection);
+                }
+                return _courseObjectiveRepository;
+            }
+        }
+        #endregion
+
+        #region Course Repository
+        public IDapperRepository<COURSES> CourseRepository
+        {
+            get
+            {
+                if (_courseRepository == null)
+                {
+                    _courseRepository = new DapperRepository<COURSES>(_connection);
+                }
+                return _courseRepository;
+            }
+        }
+        #endregion
+
+        #region Question Library Repository
+        public IDapperRepository<QUESTIONLIBRARY> QuestionLibraryRepository
+        {
+            get
+            {
+                if (_questionLibraryRepository == null)
+                {
+                    _questionLibraryRepository = new DapperRepository<QUESTIONLIBRARY>(_connection);
+                }
+                return _questionLibraryRepository;
+            }
+        }
+        #endregion
+
+        #region Question Type Repository
+        public IDapperRepository<QUESTIONTYPES> QuestionTypeRepository
+        {
+            get
+            {
+                if (_questionTypeRepository == null)
+                {
+                    _questionTypeRepository = new DapperRepository<QUESTIONTYPES>(_connection);
+                }
+                return _questionTypeRepository;
+            }
+        }
+        #endregion
+
+        #endregion
+
+        #region Unit of Work Methods
+
+        #region Database Transaction Methods
         public void BeginTransaction()
         {
             _transaction = _connection.BeginTransaction();
@@ -56,7 +145,9 @@ namespace DLearnRepositories.UnitOfWork
                 _transaction.Dispose();
             }
         }
+        #endregion
 
+        #region Stored Procedure Methods
         public void QuerySP(string storedProcedure, dynamic param = null, dynamic outParam = null, SqlTransaction transaction = null, bool buffered = true, int? commandTimeout = null)
         {
             _connection.Open();
@@ -68,7 +159,9 @@ namespace DLearnRepositories.UnitOfWork
             IEnumerable<T> output = _connection.Query<T>(storedProcedure, param: (object)param, transaction: transaction, buffered: buffered, commandTimeout: commandTimeout, commandType: CommandType.StoredProcedure);
             return output;
         }
+        #endregion
 
+        #region Dispose
         public void Dispose()
         {
             if (_transaction != null)
@@ -83,5 +176,9 @@ namespace DLearnRepositories.UnitOfWork
                 _connection = null;
             }
         }
+        #endregion
+
+        #endregion
     }
+    #endregion
 }

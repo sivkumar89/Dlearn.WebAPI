@@ -3,7 +3,7 @@ using System;
 
 namespace DLearnRepositories.DapperEntities
 {
-    [Table("COURSES.USERS")]
+    [Table("dbo.USERS")]
     public class USERS
     {
         public Guid USERID { get; set; }

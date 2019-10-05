@@ -1,4 +1,5 @@
 ﻿using DapperExtensions;
+using System;
 using System.Collections.Generic;
 
 namespace DLearnRepositories.Repositories
@@ -7,9 +8,13 @@ namespace DLearnRepositories.Repositories
     {
         bool Insert(T parameter);
         int InsertWithReturnId(T parameter);
+        Guid InsertWithReturnGuidId(T parameter);
         bool Update(T parameter);
-        IList<T> GetAll();
-        T Find(PredicateGroup predicate);
+        T Get(int id);
+        T Get(long id);
+        T Get(Guid id);
+        IEnumerable<T> GetAll();
+        IEnumerable<T> Find(PredicateGroup predicate);
         bool Delete(PredicateGroup predicate);
     }
 }

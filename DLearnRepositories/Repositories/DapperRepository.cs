@@ -3,6 +3,7 @@ using Dapper;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System;
 
 namespace DLearnRepositories.Repositories
 {
@@ -30,6 +31,14 @@ namespace DLearnRepositories.Repositories
             return recordId;
         }
 
+        public Guid InsertWithReturnGuidId(T parameter)
+        {
+            _dbConnection.Open();
+            var recordId = _dbConnection.Insert(parameter);
+            _dbConnection.Close();
+            return recordId;
+        }
+
         public bool Update(T parameter)
         {
             _dbConnection.Open();
@@ -38,7 +47,31 @@ namespace DLearnRepositories.Repositories
             return true;
         }
 
-        public IList<T> GetAll()
+        public T Get(int id)
+        {
+            _dbConnection.Open();
+            var result = _dbConnection.Get<T>(id);
+            _dbConnection.Close();
+            return result;
+        }
+
+        public T Get(long id)
+        {
+            _dbConnection.Open();
+            var result = _dbConnection.Get<T>(id);
+            _dbConnection.Close();
+            return result;
+        }
+
+        public T Get(Guid id)
+        {
+            _dbConnection.Open();
+            var result = _dbConnection.Get<T>(id);
+            _dbConnection.Close();
+            return result;
+        }
+
+        public IEnumerable<T> GetAll()
         {
             _dbConnection.Open();
             var result = _dbConnection.GetList<T>();
@@ -46,10 +79,10 @@ namespace DLearnRepositories.Repositories
             return result.ToList();
         }
 
-        public T Find(PredicateGroup predicate)
+        public IEnumerable<T> Find(PredicateGroup predicate)
         {
             _dbConnection.Open();
-            var result = _dbConnection.GetList<T>(predicate).FirstOrDefault();
+            var result = _dbConnection.GetList<T>(predicate);
             _dbConnection.Close();
             return result;
         }
