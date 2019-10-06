@@ -6,5 +6,6 @@ namespace DLearnServices.Interfaces
     public interface IUserService
     {
         IList<UserEntity> GetAllUsers();
+        UserValidationEntity GetUserDetailsByEmail(string email);
     }
 }

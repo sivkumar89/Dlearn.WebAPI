@@ -2,6 +2,7 @@
 using System.Web.Http;
 using DLearnAPI.Providers;
 using DLearnInfrastructure.Utilities;
+using DLearnServices.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Jwt;
@@ -36,7 +37,7 @@ namespace DLearnAPI.Startup
                 TokenEndpointPath = new PathString("/login"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(Convert.ToInt32(DLearnInfrastructure.Utilities.Utility.GetAppSettings(DLearnConstants.TokenExpireInMinutes))),
                 AccessTokenFormat = new DLearnJWTFormat(),
-                Provider = new DLearnOAuthProvider(),
+                Provider = new DLearnOAuthProvider((IUserService)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IUserService))),
                 RefreshTokenProvider = new DLearnRTProvider(),
                 AllowInsecureHttp = true,
             };
