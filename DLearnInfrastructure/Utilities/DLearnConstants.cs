@@ -10,6 +10,16 @@
         public const string ClaimsUsername = ":fullname";
         public const string ClaimsUserId = ":userid";
         public const string ClaimsEmailId = ":email";
+        public const string UserName = "username";
+        public const string Password = "password";
+        public const string LoginType = "logintype";
+        public const string FirstName = "firstname";
+        public const string LastName = "lastname";
+        public const string DOB = "dob";
+        public const string Gender = "gender";
+        public const string Phone = "phone";
+        public const string SubscriptionType = "subscription";
+        public const string OwinChallengeFlag = "X-Challenge";
 
         #endregion
 
@@ -18,7 +28,14 @@
         public enum DLearnErrorMessage
         {
             INVALIDCREDENTIALS = 1,
-            USERNOTFOUND = 2
+            USERNOTFOUND = 2,
+            INTERNALSERVERERROR = 3
+        }
+
+        public enum SignInType
+        {
+            Login = 1,
+            Register = 2
         }
         #endregion
     }

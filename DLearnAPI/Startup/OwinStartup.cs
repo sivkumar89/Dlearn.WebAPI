@@ -18,12 +18,14 @@ namespace DLearnAPI.Startup
         public void Configuration(IAppBuilder app)
         {
             HttpConfiguration config = new HttpConfiguration();
+            
+            app.Use<DLearnAuthMiddleware>();
 
             // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=316888
             ConfigureAuth(app);
 
             WebApiConfig.Register(config);
-
+            
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
         }
@@ -39,7 +41,7 @@ namespace DLearnAPI.Startup
                 AccessTokenFormat = new DLearnJWTFormat(),
                 Provider = new DLearnOAuthProvider((IUserService)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IUserService))),
                 RefreshTokenProvider = new DLearnRTProvider(),
-                AllowInsecureHttp = true,
+                AllowInsecureHttp = true
             };
 
             var dLearnJWTOptions = new JwtBearerAuthenticationOptions

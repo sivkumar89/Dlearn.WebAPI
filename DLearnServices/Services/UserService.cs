@@ -1,10 +1,11 @@
-﻿using DapperExtensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using DapperExtensions;
 using DLearnRepositories.DapperEntities;
 using DLearnRepositories.UnitOfWork;
 using DLearnServices.Entities;
 using DLearnServices.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace DLearnServices.Services
 {
@@ -53,17 +54,17 @@ namespace DLearnServices.Services
                 PredicateGroup predicateGroup = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
                 predicateGroup.Predicates.Add(Predicates.Field<USERS>(u => u.EMAIL, Operator.Eq, email));
                 predicateGroup.Predicates.Add(Predicates.Field<USERS>(u => u.ISACTIVE, Operator.Eq, true));
-                USERS userDetail = _unitOfWork.UserRepository.Find(predicateGroup).SingleOrDefault();
-                if (userDetail != null)
+                USERS dbUser = _unitOfWork.UserRepository.Find(predicateGroup).SingleOrDefault();
+                if (dbUser != null)
                 {
                     UserValidationEntity userValidationEntity = new UserValidationEntity()
                     {
-                        DOB = userDetail.DATEOFBIRTH,
-                        Email = userDetail.EMAIL,
-                        FullName = userDetail.FULLNAME,
-                        PasswordHash = userDetail.PASSWORDHASH,
-                        Salt = userDetail.SALT,
-                        UserId = userDetail.USERID
+                        DOB = dbUser.DATEOFBIRTH,
+                        Email = dbUser.EMAIL,
+                        FullName = dbUser.FULLNAME,
+                        PasswordHash = dbUser.PASSWORDHASH,
+                        Salt = dbUser.SALT,
+                        UserId = dbUser.USERID
                     };
                     return userValidationEntity;
                 }
@@ -71,6 +72,39 @@ namespace DLearnServices.Services
             return null;
         }
         #endregion
+
+        public void UpdateUserTimestamp(Guid userID)
+        {
+            USERS dbUser = _unitOfWork.UserRepository.Get(userID);
+            dbUser.LASTMODIFIED = DateTime.Now;
+            dbUser.LASTLOGON = DateTime.Now;
+            _unitOfWork.UserRepository.Update(dbUser);
+        }
+
+        public Guid CreateUser(UserCreateRequestEntity userCreateRequest)
+        {
+            if (userCreateRequest != null)
+            {
+                USERS dbUser = new USERS
+                {
+                    DATEOFBIRTH = userCreateRequest.DOB,
+                    EMAIL = userCreateRequest.Email,
+                    FIRSTNAME = userCreateRequest.FirstName,
+                    FULLNAME = userCreateRequest.FullName,
+                    GENDER = userCreateRequest.Gender,
+                    LASTLOGON = DateTime.Now,
+                    LASTNAME = userCreateRequest.LastName,
+                    PASSWORDHASH = userCreateRequest.PasswordHash,
+                    PHONENUMBER = userCreateRequest.Phone,
+                    SALT = userCreateRequest.Salt,
+                    SUBSCRIPTIONTYPE = userCreateRequest.SubscriptionType,
+                    CREATEDON = DateTime.Now,
+                    ISACTIVE = true
+                };
+                return _unitOfWork.UserRepository.InsertWithReturnGuidId(dbUser);
+            }
+            return Guid.Empty;
+        }
     }
     #endregion
 }

@@ -17,7 +17,7 @@ namespace DLearnAPI.Controllers
         [HttpGet]
         public HttpResponseMessage Get()
         {
-            return Request.CreateResponse(HttpStatusCode.OK, "Your token has been validated successfully");
+            return Request.CreateResponse(HttpStatusCode.OK, "Your token has been validated successfully: " + GetUserId());
         }
 
         [Route("User/GetAll")]

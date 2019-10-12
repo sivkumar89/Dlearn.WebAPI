@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Owin.Security.OAuth;
@@ -43,13 +44,38 @@ namespace DLearnAPI.Providers
         {
             try
             {
-                string userName = context.Parameters["username"];
-                string password = context.Parameters["password"];
-                string loginType = context.Parameters["logintype"];
+                string userName = context.Parameters[DLearnConstants.UserName];
+                string password = context.Parameters[DLearnConstants.Password];
+                string loginType = context.Parameters[DLearnConstants.LoginType];
 
                 if (!string.IsNullOrWhiteSpace(userName) && Utility.IsValidEmail(userName) && !string.IsNullOrWhiteSpace(password))
                 {
-                    if (string.IsNullOrWhiteSpace(loginType))
+                    if (!string.IsNullOrWhiteSpace(loginType) && loginType == SignInType.Register.ToString())
+                    {
+                        UserCreateRequestEntity userCreateRequest = new UserCreateRequestEntity
+                        {
+                            Email = userName,
+                            Salt = SaltGenerator.CreateRandomSalt(),
+                            FirstName = context.Parameters[DLearnConstants.FirstName],
+                            LastName = context.Parameters[DLearnConstants.LastName],
+                            DOB = !string.IsNullOrWhiteSpace(context.Parameters[DLearnConstants.DOB]) ? DateTime.ParseExact(context.Parameters[DLearnConstants.DOB], "yyyy-MM-dd", null) : DateTime.MinValue,
+                            Gender = context.Parameters[DLearnConstants.Gender],
+                            Phone = context.Parameters[DLearnConstants.Phone],
+                            SubscriptionType = context.Parameters[DLearnConstants.SubscriptionType]
+                        };
+                        userCreateRequest.FullName = userCreateRequest.FirstName + (!string.IsNullOrWhiteSpace(userCreateRequest.LastName) ? " " + userCreateRequest.LastName : string.Empty);
+                        userCreateRequest.PasswordHash = HashGenerator.CreateHashedKey(password, userCreateRequest.Salt);
+                        Guid userID = _userService.CreateUser(userCreateRequest);
+                        if (userID != Guid.Empty)
+                        {
+                            GrantUserCredentials(ref context, userCreateRequest.FullName, userCreateRequest.Email, userID);
+                        }
+                        else
+                        {
+                            HandleLoginError(ref context, DLearnErrorMessage.INTERNALSERVERERROR);
+                        }
+                    }
+                    else
                     {
                         UserValidationEntity userDetail = _userService.GetUserDetailsByEmail(userName);
                         if (userDetail != null)
@@ -57,52 +83,63 @@ namespace DLearnAPI.Providers
                             string hashedKey = HashGenerator.CreateHashedKey(password, userDetail.Salt);
                             if (!string.IsNullOrWhiteSpace(hashedKey) && hashedKey == userDetail.PasswordHash)
                             {
-                                context.OwinContext.Set(DLearnConstants.DefaultClaimName + DLearnConstants.ClaimsUsername, userDetail.FullName);
-                                context.OwinContext.Set(DLearnConstants.DefaultClaimName + DLearnConstants.ClaimsUserId, userDetail.UserId);
-                                context.OwinContext.Set(DLearnConstants.DefaultClaimName + DLearnConstants.ClaimsEmailId, userDetail.Email);
-                                context.Validated();
+                                _userService.UpdateUserTimestamp(userDetail.UserId);
+                                GrantUserCredentials(ref context, userDetail.FullName, userDetail.Email, userDetail.UserId);
                             }
                             else
                             {
-                                HandleLoginError(context, DLearnErrorMessage.INVALIDCREDENTIALS);
+                                HandleLoginError(ref context, DLearnErrorMessage.INVALIDCREDENTIALS);
                             }
                         }
                         else
                         {
-                            HandleLoginError(context, DLearnErrorMessage.USERNOTFOUND);
+                            HandleLoginError(ref context, DLearnErrorMessage.USERNOTFOUND);
                         }
                     }
                 }
                 else
                 {
-                    HandleLoginError(context, DLearnErrorMessage.INVALIDCREDENTIALS);
+                    HandleLoginError(ref context, DLearnErrorMessage.INVALIDCREDENTIALS);
                 }
             }
             catch (Exception ex)
             {
                 context.SetError("Server error", ex.Message + (ex.InnerException != null ? " Cause:" + ex.InnerException.Message : string.Empty));
-                context.Rejected();
+                context.Response.Headers.Add(DLearnConstants.OwinChallengeFlag, new[] { ((int)HttpStatusCode.InternalServerError).ToString() });
+
             }
             return Task.FromResult(0);
         }
         #endregion
 
         #region OAuth Authorization Server Provider Private Methods
-        private void HandleLoginError(OAuthValidateClientAuthenticationContext context, DLearnErrorMessage errorCode)
+        private void HandleLoginError(ref OAuthValidateClientAuthenticationContext context, DLearnErrorMessage errorCode)
         {
             switch (errorCode)
             {
                 case DLearnErrorMessage.INVALIDCREDENTIALS:
                     context.SetError("Invalid credentials");
+                    context.Response.Headers.Add(DLearnConstants.OwinChallengeFlag, new[] { ((int)HttpStatusCode.Unauthorized).ToString() });
                     break;
                 case DLearnErrorMessage.USERNOTFOUND:
                     context.SetError("User not found");
+                    context.Response.Headers.Add(DLearnConstants.OwinChallengeFlag, new[] { ((int)HttpStatusCode.NotFound).ToString() });
                     break;
                 default:
                     context.SetError("Internal Server Error");
+                    context.Response.Headers.Add(DLearnConstants.OwinChallengeFlag, new[] { ((int)HttpStatusCode.InternalServerError).ToString() });
                     break;
             }
-            context.Rejected();
+        }
+        #endregion
+
+        #region Set User Claims
+        private void GrantUserCredentials(ref OAuthValidateClientAuthenticationContext context, string fullName, string emailID, Guid userID)
+        {
+            context.OwinContext.Set(DLearnConstants.DefaultClaimName + DLearnConstants.ClaimsUsername, fullName);
+            context.OwinContext.Set(DLearnConstants.DefaultClaimName + DLearnConstants.ClaimsUserId, userID);
+            context.OwinContext.Set(DLearnConstants.DefaultClaimName + DLearnConstants.ClaimsEmailId, emailID);
+            context.Validated();
         }
         #endregion
     }
