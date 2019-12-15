@@ -21,8 +21,8 @@ namespace DLearnRepositories.UnitOfWork
         private IDapperRepository<COURSECATEGORY> _courseCategoryRepository;
         private IDapperRepository<COURSEOBJECTIVES> _courseObjectiveRepository;
         private IDapperRepository<COURSES> _courseRepository;
-        private IDapperRepository<QUESTIONLIBRARY> _questionLibraryRepository;
-        private IDapperRepository<QUESTIONTYPES> _questionTypeRepository;
+        private IDapperRepository<CHOICES> _choiceRepository;
+        private IDapperRepository<ANSWER> _answerRepository;
         #endregion
 
         #region Constructor
@@ -91,30 +91,30 @@ namespace DLearnRepositories.UnitOfWork
         }
         #endregion
 
-        #region Question Library Repository
-        public IDapperRepository<QUESTIONLIBRARY> QuestionLibraryRepository
+        #region Choices Repository
+        public IDapperRepository<CHOICES> ChoiceRepository
         {
             get
             {
-                if (_questionLibraryRepository == null)
+                if (_choiceRepository == null)
                 {
-                    _questionLibraryRepository = new DapperRepository<QUESTIONLIBRARY>(_connection);
+                    _choiceRepository = new DapperRepository<CHOICES>(_connection);
                 }
-                return _questionLibraryRepository;
+                return _choiceRepository;
             }
         }
         #endregion
 
-        #region Question Type Repository
-        public IDapperRepository<QUESTIONTYPES> QuestionTypeRepository
+        #region Answer Repository
+        public IDapperRepository<ANSWER> AnswerRepository
         {
             get
             {
-                if (_questionTypeRepository == null)
+                if (_answerRepository == null)
                 {
-                    _questionTypeRepository = new DapperRepository<QUESTIONTYPES>(_connection);
+                    _answerRepository = new DapperRepository<ANSWER>(_connection);
                 }
-                return _questionTypeRepository;
+                return _answerRepository;
             }
         }
         #endregion

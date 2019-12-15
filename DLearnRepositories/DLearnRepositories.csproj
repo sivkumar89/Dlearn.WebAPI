@@ -54,8 +54,8 @@
     <Compile Include="DapperEntities\COURSECATEGORY.cs" />
     <Compile Include="DapperEntities\COURSEOBJECTIVES.cs" />
     <Compile Include="DapperEntities\COURSES.cs" />
-    <Compile Include="DapperEntities\QUESTIONLIBRARY.cs" />
-    <Compile Include="DapperEntities\QUESTIONTYPES.cs" />
+    <Compile Include="DapperEntities\CHOICES.cs" />
+    <Compile Include="DapperEntities\ANSWER.cs" />
     <Compile Include="DapperEntities\USERS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\DapperRepository.cs" />

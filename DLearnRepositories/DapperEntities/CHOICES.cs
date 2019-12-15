@@ -3,16 +3,14 @@ using System;
 
 namespace DLearnRepositories.DapperEntities
 {
-    [Table("COURSE.COURSEOBJECTIVES")]
-    public class COURSEOBJECTIVES
+    [Table("COURSE.CHOICES")]
+    public class CHOICES
     {
+        public long CHOICEID { get; set; }
+        public string CHOICEDESC { get; set; }
         public long COURSEOBJECTIVEID { get; set; }
-        public long COURSEID { get; set; }
         public int? DISPLAYORDER { get; set; }
-        public int? DURATION { get; set; }
         public bool ISACTIVE { get; set; }
-        public Guid CREATEDBY { get; set; }
-        public Guid? LASTMODIFIEDBY { get; set; }
         public DateTime CREATEDON { get; set; }
         public DateTime? LASTMODIFIEDON { get; set; }
     }
