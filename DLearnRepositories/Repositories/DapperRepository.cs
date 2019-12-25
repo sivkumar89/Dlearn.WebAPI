@@ -30,6 +30,13 @@ namespace DLearnRepositories.Repositories
             _dbConnection.Close();
             return recordId;
         }
+        public long InsertWithReturnLongId(T parameter)
+        {
+            _dbConnection.Open();
+            var recordId = _dbConnection.Insert(parameter);
+            _dbConnection.Close();
+            return recordId;
+        }
 
         public Guid InsertWithReturnGuidId(T parameter)
         {

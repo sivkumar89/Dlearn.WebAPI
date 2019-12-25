@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\AddressEntity.cs" />
+    <Compile Include="Entities\StatesEntity.cs" />
     <Compile Include="Entities\UserCreateRequestEntity.cs" />
     <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="Entities\UserValidationEntity.cs" />

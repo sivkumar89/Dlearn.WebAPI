@@ -8,6 +8,7 @@ namespace DLearnRepositories.Repositories
     {
         bool Insert(T parameter);
         int InsertWithReturnId(T parameter);
+        long InsertWithReturnLongId(T parameter);
         Guid InsertWithReturnGuidId(T parameter);
         bool Update(T parameter);
         T Get(int id);

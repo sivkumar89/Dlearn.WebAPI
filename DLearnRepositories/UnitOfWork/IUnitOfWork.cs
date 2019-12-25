@@ -13,6 +13,8 @@ namespace DLearnRepositories.UnitOfWork
         IDapperRepository<COURSES> CourseRepository { get; }
         IDapperRepository<CHOICES> ChoiceRepository { get; }
         IDapperRepository<ANSWER> AnswerRepository { get; }
+        IDapperRepository<STATES> StatesRepository { get; }
+        IDapperRepository<USERADDRESS> UserAddressRepository { get; }
         void BeginTransaction();
         void EndTransaction();
         void QuerySP(string storedProcedure, dynamic param = null, dynamic outParam = null, SqlTransaction transaction = null, bool buffered = true, int? commandTimeout = null);

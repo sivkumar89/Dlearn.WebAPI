@@ -6,9 +6,10 @@ namespace DLearnServices.Interfaces
 {
     public interface IUserService
     {
-        IList<UserEntity> GetAllUsers();
+        IEnumerable<StatesEntity> GetAllStates();
         UserValidationEntity GetUserDetailsByEmail(string email);
         void UpdateUserTimestamp(Guid userID);
         Guid CreateUser(UserCreateRequestEntity userCreateRequest);
+        long AddUserAddress(AddressEntity addressEntity);
     }
 }

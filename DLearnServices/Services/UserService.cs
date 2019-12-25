@@ -24,27 +24,15 @@ namespace DLearnServices.Services
         #endregion
 
         #region User Service Methods
-        public IList<UserEntity> GetAllUsers()
+        public IEnumerable<StatesEntity> GetAllStates()
         {
-            List<UserEntity> userEntities = new List<UserEntity>();
-            var userList = _unitOfWork.UserRepository.GetAll();
-            foreach (var item in userList)
+            var statesList = _unitOfWork.StatesRepository.GetAll().Where(s => s.ISACTIVE).Select(s => new StatesEntity
             {
-                UserEntity userEntity = new UserEntity
-                {
-                    DOB = item.DATEOFBIRTH,
-                    Email = item.EMAIL,
-                    FirstName = item.FIRSTNAME,
-                    FullName = item.FULLNAME,
-                    Gender = item.GENDER,
-                    LastName = item.LASTNAME,
-                    Phone = item.PHONENUMBER,
-                    SubscriptionType = item.SUBSCRIPTIONTYPE,
-                    UserId = item.USERID
-                };
-                userEntities.Add(userEntity);
-            }
-            return userEntities;
+                StateId = s.STATEID,
+                StateName = s.STATENAME
+            });
+            
+            return statesList;
         }
 
         public UserValidationEntity GetUserDetailsByEmail(string email)
@@ -104,6 +92,37 @@ namespace DLearnServices.Services
                 return _unitOfWork.UserRepository.InsertWithReturnGuidId(dbUser);
             }
             return Guid.Empty;
+        }
+
+        public long AddUserAddress(AddressEntity addressEntity)
+        {
+            if (addressEntity != null)
+            {
+                USERADDRESS dbUserAddress = new USERADDRESS
+                {
+                    ADDRESSLINE1 = addressEntity.AddressLine1,
+                    ADDRESSLINE2 = addressEntity.AddressLine2,
+                    CITY = addressEntity.City,
+                    LANDMARK = addressEntity.Landmark,
+                    PINCODE = addressEntity.PinCode,
+                    STATEID = addressEntity.StateId,
+                    USERID = addressEntity.UserId,
+                    CREATEDON = DateTime.Now,
+                    COUNTRYCODE = "IN",
+                    ADDRESSID = addressEntity.AddressId
+                };
+
+                if (addressEntity.AddressId == 0)
+                {
+                    return _unitOfWork.UserAddressRepository.InsertWithReturnLongId(dbUserAddress);
+                }
+                else
+                {
+                    _unitOfWork.UserAddressRepository.Update(dbUserAddress);
+                    return addressEntity.AddressId;
+                }
+            }
+            return 0;
         }
     }
     #endregion

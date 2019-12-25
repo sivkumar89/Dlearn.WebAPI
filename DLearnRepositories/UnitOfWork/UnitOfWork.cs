@@ -23,6 +23,8 @@ namespace DLearnRepositories.UnitOfWork
         private IDapperRepository<COURSES> _courseRepository;
         private IDapperRepository<CHOICES> _choiceRepository;
         private IDapperRepository<ANSWER> _answerRepository;
+        private IDapperRepository<STATES> _statesRepository;
+        private IDapperRepository<USERADDRESS> _userAddressRepository;
         #endregion
 
         #region Constructor
@@ -115,6 +117,34 @@ namespace DLearnRepositories.UnitOfWork
                     _answerRepository = new DapperRepository<ANSWER>(_connection);
                 }
                 return _answerRepository;
+            }
+        }
+        #endregion
+
+        #region States Repository
+        public IDapperRepository<STATES> StatesRepository
+        {
+            get
+            {
+                if (_statesRepository == null)
+                {
+                    _statesRepository = new DapperRepository<STATES>(_connection);
+                }
+                return _statesRepository;
+            }
+        }
+        #endregion
+
+        #region User Address Repository
+        public IDapperRepository<USERADDRESS> UserAddressRepository
+        {
+            get
+            {
+                if (_userAddressRepository == null)
+                {
+                    _userAddressRepository = new DapperRepository<USERADDRESS>(_connection);
+                }
+                return _userAddressRepository;
             }
         }
         #endregion

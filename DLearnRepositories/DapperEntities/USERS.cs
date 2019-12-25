@@ -16,8 +16,6 @@ namespace DLearnRepositories.DapperEntities
         public string SALT { get; set; }
         public string EMAIL { get; set; }
         public string PHONENUMBER { get; set; }
-        public long? ADDRESSID { get; set; }
-        public long? IMAGEID { get; set; }
         public string SUBSCRIPTIONTYPE { get; set; }
         public bool ISACTIVE { get; set; }
         public DateTime CREATEDON { get; set; }
